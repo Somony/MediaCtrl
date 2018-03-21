@@ -82,7 +82,8 @@ public class PhotoSelectManager {
     private void createImageCaptureUri() {
         Activity a = (mActivity == null ? mFragment.getActivity() : mActivity);
         imageCaptureFile = PathUtils.getFile("media/image", PathUtils.getDate() + ".png");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//7.0及以上
+        //7.0及以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             uriForImageCapture = FileProvider.getUriForFile(a, AUTHORITY, imageCaptureFile);
         } else {
             uriForImageCapture = Uri.fromFile(imageCaptureFile);

@@ -17,12 +17,14 @@ public class PathUtils {
      */
     public static String getSDPath() {
         File sdDir;
+        // 判断sd卡是否存在
         boolean sdCardExist = Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
+                Environment.MEDIA_MOUNTED);
         if (!sdCardExist) {
             return null;
         }
-        sdDir = Environment.getExternalStorageDirectory();// 获取跟目录
+        // 获取跟目录
+        sdDir = Environment.getExternalStorageDirectory();
         return sdDir.getAbsolutePath();
     }
 

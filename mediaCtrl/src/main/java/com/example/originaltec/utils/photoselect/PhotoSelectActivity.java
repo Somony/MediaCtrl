@@ -86,5 +86,8 @@ public class PhotoSelectActivity extends AppCompatActivity {
                 finish();
             }
         }
+        if (resultCode == RESULT_CANCELED) {
+            finish();
+        }
     }
 }

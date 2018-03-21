@@ -31,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.iv_photo);
         manager = new PhotoSelectManager();
         manager.from(this);
+
+        MainFragment mainFragment = MainFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_container,mainFragment,mainFragment.getClass()
+                .getSimpleName()).commit();
     }
 
     public void click(View view) {

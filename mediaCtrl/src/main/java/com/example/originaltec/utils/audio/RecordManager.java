@@ -34,18 +34,22 @@ public class RecordManager {
      * 录音文件配置信息
      */
     private final int frequency = 16000;
-    int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
-    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    private int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    private int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
     /**
      * 外界调用setRecording，isRecording设置录音或者停止
      */
     private boolean isRecording;
 
-    //记录写入的文件大小
+    /**
+     * 记录写入的文件大小
+     */
     private int mDataSize;
 
-    //完整的wav文件
+    /**
+     * 完整的wav文件
+     */
     private File audioFile;
 
     /**
@@ -64,20 +68,60 @@ public class RecordManager {
         return recordManager;
     }
 
-    public boolean isRecording() {
+    /**
+     * record之前的准备
+     */
+    public void prepare() {
+        isRecording = true;
+    }
+
+    /**
+     * 结束录音
+     */
+    public void stop() {
+        isRecording = false;
+    }
+
+    /**
+     * 录音是否停止
+     *
+     * @return
+     */
+    public boolean isStop() {
         return isRecording;
     }
 
-    public void setRecording(boolean recording) {
-        isRecording = recording;
+    /**
+     * 暂停录音
+     */
+    public void pause() {
+        pause = true;
     }
 
+    /**
+     * 暂停后的重新开始，继续暂停前的录音
+     */
+    public void reStart() {
+        pause = false;
+    }
+
+    /**
+     * 录音是否暂停
+     *
+     * @return
+     */
     public boolean isPause() {
         return pause;
     }
 
-    public void setPause(boolean pause) {
-        this.pause = pause;
+
+    /**
+     * 只保存完整文件 格式是wav
+     *
+     * @param audioFile
+     */
+    public void record(File audioFile) {
+        record(audioFile, false, null, 160000, "wav");
     }
 
     /**
@@ -115,7 +159,7 @@ public class RecordManager {
             byte[] buffer = new byte[bufferSize];
             rawOS = new FileOutputStream(audioFile);
             rawBaos = new DataOutputStream(rawOS);
-            if (type.equals("wav")) {
+            if ("wav".equals(type)) {
                 rawBaos.write(getWavHeader(0));
             }
             audioRecord.startRecording();
@@ -146,11 +190,12 @@ public class RecordManager {
                                         baos.write(buffer, 0, bufferReadResult);
                                     }
                                     fileFlag = true;
-                                    file = type.equals("wav") ? PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".wav") : PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".pcm");
+                                    file = "wav".equals(type) ? PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".wav")
+                                            : PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".pcm");
                                     buffer = baos.toByteArray();
                                     os = new FileOutputStream(file);
                                     //写入文件头就是wav文件
-                                    if (type.equals("wav")) {
+                                    if ("wav".equals(type)) {
                                         os.write(getWavHeader(buffer.length));
                                     }
                                     os.write(buffer);
@@ -188,13 +233,13 @@ public class RecordManager {
             }
             //录音完毕但是不足recogCutTime的部分也要保存下来
             if (baos != null) {
-                if (!isRecording && baos.size() < recogCutTime) {
+                if (needSnippet && !isRecording && baos.size() < recogCutTime) {
                     try {
-                        file = type.equals("wav") ? PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".wav")
+                        file = "wav".equals(type) ? PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".wav")
                                 : PathUtils.getFile(audioFile.getParent(), "record" + System.currentTimeMillis() + ".pcm");
                         buffer = baos.toByteArray();
                         os = new FileOutputStream(file);
-                        if (type.equals("wav")) {
+                        if ("wav".equals(type)) {
                             os.write(getWavHeader(buffer.length));
                         }
                         os.write(buffer);
@@ -226,7 +271,7 @@ public class RecordManager {
                 }
             }
             audioRecord.stop();
-            if (type.equals("wav")) {
+            if ("wav".equals(type)) {
                 //修改wav头中信息
                 writeDataSize();
             }
@@ -267,7 +312,8 @@ public class RecordManager {
         long byteRate = frequency * 2 * mChannels;
 
         byte[] header = new byte[44];
-        header[0] = 'R';  // RIFF/WAVE header
+        // RIFF/WAVE header
+        header[0] = 'R';
         header[1] = 'I';
         header[2] = 'F';
         header[3] = 'F';
@@ -279,15 +325,18 @@ public class RecordManager {
         header[9] = 'A';
         header[10] = 'V';
         header[11] = 'E';
-        header[12] = 'f';  // 'fmt ' chunk
+        // 'fmt ' chunk
+        header[12] = 'f';
         header[13] = 'm';
         header[14] = 't';
         header[15] = ' ';
-        header[16] = 16;  // 4 bytes: size of 'fmt ' chunk
+        // 4 bytes: size of 'fmt ' chunk
+        header[16] = 16;
         header[17] = 0;
         header[18] = 0;
         header[19] = 0;
-        header[20] = 1;  // format = 1
+        // format = 1
+        header[20] = 1;
         header[21] = 0;
         header[22] = (byte) mChannels;
         header[23] = 0;
@@ -299,9 +348,11 @@ public class RecordManager {
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
         header[31] = (byte) ((byteRate >> 24) & 0xff);
-        header[32] = (byte) (2 * mChannels);  // block align
+        // block align
+        header[32] = (byte) (2 * mChannels);
         header[33] = 0;
-        header[34] = 16;  // bits per sample
+        // bits per sample
+        header[34] = 16;
         header[35] = 0;
         header[36] = 'd';
         header[37] = 'a';
@@ -342,9 +393,14 @@ public class RecordManager {
     }
 
     /**
-     * 对完成文件头更新之后的回调，此时可以对文件进行操作
+     * 对完成文件头更新之后的回调
      */
     public interface OnUpdateFileHeadCompleted {
+        /**
+         * 回调出文件，可以对文件进行操作
+         *
+         * @param file
+         */
         void completed(File file);
     }
 
