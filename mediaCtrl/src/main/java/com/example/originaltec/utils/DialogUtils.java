@@ -9,7 +9,9 @@ import android.view.WindowManager;
 import com.example.originaltec.R;
 
 /**
- * Created by somon on 2016/8/10.
+ * @author 作者：Somon
+ * @date 创建时间：2018/3/22
+ * @desception
  */
 public class DialogUtils {
 
@@ -29,9 +31,12 @@ public class DialogUtils {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         //将设置好的属性set回去
         window.setAttributes(lp);
-        window.setGravity(gravity);  //此处可以设置dialog显示的位置
-        window.setWindowAnimations(R.style.DialogAnim);  //添加动画
-        dialog.setCanceledOnTouchOutside(canceledOnTouchOutside); //不能外点击取消
+        //此处可以设置dialog显示的位置
+        window.setGravity(gravity);
+        //添加动画
+        window.setWindowAnimations(R.style.DialogAnim);
+        //不能外点击取消
+        dialog.setCanceledOnTouchOutside(canceledOnTouchOutside);
     }
 
     public static void dialogDismiss() {

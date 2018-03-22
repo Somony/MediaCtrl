@@ -26,12 +26,11 @@ import java.io.File;
 
 
 /**
- * @author 作者：somon
+ * @author 作者：Somon
  * @date 创建时间：2018/3/21
- * @desception
+ * @desception 测试录音和fragment中选择图片/拍照
  */
 public class MainFragment extends Fragment implements View.OnClickListener {
-
 
     private RecordManager recordManager;
     private PhotoSelectManager manager;
@@ -76,7 +75,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         new PermissionResultListener() {
 
                             @Override
-                            public void permissionGranted() {
+                            public void permissionGranted(int requestCode) {
                                 new Thread(() -> {
                                     File file = PathUtils.getFile("media/audio", System.currentTimeMillis() + ".wav");
                                     recordManager.prepare();
@@ -85,7 +84,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                             }
 
                             @Override
-                            public void permissionDenied() {
+                            public void permissionDenied(int requestCode) {
 
                             }
                         }, 200);
@@ -106,7 +105,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 new PermissionResultListener() {
                     @Override
-                    public void permissionGranted() {
+                    public void permissionGranted(int requestCode) {
                         View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_photo_selector_layout, null,
                                 false);
                         DialogUtils.showDialog(getActivity(), view, Gravity.BOTTOM, true);
@@ -153,7 +152,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     }
 
                     @Override
-                    public void permissionDenied() {
+                    public void permissionDenied(int requestCode) {
 
                     }
                 }, REQUEST_PERMISSION);

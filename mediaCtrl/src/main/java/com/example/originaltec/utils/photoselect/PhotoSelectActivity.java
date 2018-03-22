@@ -7,6 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
 
+/**
+ * @author 作者：Somon
+ * @date 创建时间：2018/3/22
+ * @desception 图片拍照/图库选择实现类，中间activity用来处理拍照和图片选择的结果，封装细节
+ */
 public class PhotoSelectActivity extends AppCompatActivity {
     private PhotoSelectManager manager;
     private PhotoSelectResultListener listener;
@@ -30,6 +35,8 @@ public class PhotoSelectActivity extends AppCompatActivity {
                 break;
             case PhotoSelector.TYPE_PICK:
                 manager.imagePick();
+                break;
+            default:
                 break;
         }
     }
@@ -63,10 +70,6 @@ public class PhotoSelectActivity extends AppCompatActivity {
                 case PhotoSelectManager.REQUEST_IMAGE_PICK_N:
                     imageFile = manager.getImagePickFile();
                     imageUri = manager.getContentUriForImagePick();
-                  /*  if (PhotoSelector.newInstance().isCrop()) {
-                        manager.cropImagePick(imageUri, 200, 200);
-                        needFinish = false;
-                    }*/
 
                     break;
                 case PhotoSelectManager.REQUEST_IMAGE_CROP_CAPTURE:

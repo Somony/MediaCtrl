@@ -24,10 +24,10 @@ import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 /**
- * Created by lhc on 18/3/1.
- * 跳转到系统相机拍照／相册选取图片，对图片进行剪切
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception 跳转到系统相机拍照／相册选取图片，对图片进行剪切
  */
-
 public class PhotoSelectManager {
     private Activity mActivity;
     private Fragment mFragment;
@@ -121,27 +121,11 @@ public class PhotoSelectManager {
         if (!checkExist(imagePickIntent)) {
             return;
         }
-
-        //如果大于等于7.0使用FileProvider将Uri传递过去
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Activity a = (mActivity == null ? mFragment.getActivity() : mActivity);
-            imagePickFile = PathUtils.getFile(a);
-            contentUriForImagePick = FileProvider.getUriForFile(a, AUTHORITY, imagePickFile);
-            imagePickIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUriForImagePick);
-            imagePickIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            imagePickIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (mActivity != null) {
-                mActivity.startActivityForResult(imagePickIntent, REQUEST_IMAGE_PICK_N);
-            } else {
-                mFragment.startActivityForResult(imagePickIntent, REQUEST_IMAGE_PICK_N);
-            }
-        } else {*/
         if (mActivity != null) {
             mActivity.startActivityForResult(imagePickIntent, REQUEST_IMAGE_PICK);
         } else {
             mFragment.startActivityForResult(imagePickIntent, REQUEST_IMAGE_PICK);
         }
-//        }
     }
 
     /**
@@ -191,7 +175,7 @@ public class PhotoSelectManager {
         Activity a = (mActivity == null ? mFragment.getActivity() : mActivity);
         imageCropFile = PathUtils.getFile("media/image", PathUtils.getDate() + ".png");
         fileUriForCrop = Uri.fromFile(imageCropFile);
-//        }
+        //        }
 
         Intent intent = new Intent("com.android.camera.action.CROP");
 
@@ -217,8 +201,8 @@ public class PhotoSelectManager {
         intent.putExtra("return-data", false);
 
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-
-        intent.putExtra("noFaceDetection", true); // no face detection
+        // no face detection
+        intent.putExtra("noFaceDetection", true);
 
         intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);

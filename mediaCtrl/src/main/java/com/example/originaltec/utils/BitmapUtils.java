@@ -12,11 +12,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
 /**
- * Created by lhc on 18/3/1.
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception
  */
-
 public class BitmapUtils {
     /**
      * 2.其次压缩图片，通过降低图片的质量来压缩图片
@@ -69,7 +69,7 @@ public class BitmapUtils {
      */
 
     public static Bitmap compressSize(Uri imageUri, ContentResolver contentResolver,
-                                       int targetWidth, int targetHeight) {
+                                      int targetWidth, int targetHeight) {
         Bitmap thumbnail = null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -147,6 +147,7 @@ public class BitmapUtils {
 
     /**
      * 获取图片旋转角度
+     *
      * @param path 图片路径
      * @return
      */
@@ -165,6 +166,8 @@ public class BitmapUtils {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     degree = 270;
                     break;
+                default:
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -173,9 +176,9 @@ public class BitmapUtils {
     }
 
     /**
+     * 图片旋转操作
      *
-     ＊ 图片旋转操作
-     * @param bm 需要旋转的图片
+     * @param bm     需要旋转的图片
      * @param degree 旋转角度
      * @return 旋转后的图片
      */

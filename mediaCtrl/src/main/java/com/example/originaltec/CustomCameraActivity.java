@@ -2,6 +2,7 @@ package com.example.originaltec;
 
 import android.Manifest;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
@@ -16,9 +17,14 @@ import com.example.originaltec.utils.permission.PermissionUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
+/**
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception 测试自定义的camrea操作
+ */
 public class CustomCameraActivity extends AppCompatActivity {
     private int recordStatus = 0;
+    private int flashStatus = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,10 @@ public class CustomCameraActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         Button capture = (Button) findViewById(R.id.button_capture);
         Button record = (Button) findViewById(R.id.button_record);
-        preview.addView(manager.cameraSetting(this, 1080, 1500));
+        Button falsh = (Button) findViewById(R.id.button_flash);
+
+        Point point = screenSize();
+        preview.addView(manager.cameraSetting(this, point.x, point.y));
 
         capture.setOnClickListener(v -> manager.capture());
 
@@ -49,13 +58,26 @@ public class CustomCameraActivity extends AppCompatActivity {
                 manager.stoprecordVideo();
                 recordStatus = 0;
                 record.setText("record");
+            }
+        });
+
+        falsh.setOnClickListener((v) -> {
+            if (flashStatus == 0) {
+                manager.turnLightCamera(this, true);
+                flashStatus = 1;
+                record.setText("off");
+            } else {
+                manager.turnLightCamera(this, false);
+
+                flashStatus = 0;
+                record.setText("on");
 
             }
         });
 
         manager.setPictureTakenListener((data, camera) -> PermissionUtils.requestPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionResultListener() {
             @Override
-            public void permissionGranted() {
+            public void permissionGranted(int requestCode) {
 /*
          * 照片信息就存储在data数组中，用一个fileoutputStream接收即可
          */
@@ -71,9 +93,17 @@ public class CustomCameraActivity extends AppCompatActivity {
             }
 
             @Override
-            public void permissionDenied() {
+            public void permissionDenied(int requestCode) {
 
             }
         }, 400));
+    }
+
+    private Point screenSize() {
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Point point = new Point();
+        windowManager.getDefaultDisplay().getSize(point);
+        return point;
+
     }
 }

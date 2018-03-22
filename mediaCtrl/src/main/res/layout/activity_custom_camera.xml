@@ -26,7 +26,12 @@
             android:id="@+id/button_record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="record"/>
+
+        <Button
+            android:id="@+id/button_flash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="on"/>
     </LinearLayout>
 </LinearLayout>

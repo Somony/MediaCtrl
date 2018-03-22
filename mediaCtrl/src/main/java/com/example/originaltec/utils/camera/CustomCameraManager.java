@@ -2,6 +2,7 @@ package com.example.originaltec.utils.camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -10,6 +11,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +43,8 @@ public class CustomCameraManager {
      * @return
      */
     public CameraPreview cameraSetting(Activity activity, int width, int height) {
+        Log.e("screenSize", String.format("screenSize width=%d,height=%d", width, height));
+
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
@@ -67,6 +71,9 @@ public class CustomCameraManager {
         //手机预览的分辨率
         List<Camera.Size> previewSizeList = parameters.getSupportedPreviewSizes();
         Camera.Size previewSize = getProperSize(previewSizeList, ((float) height / width));
+        Log.e("previewSize", String.format("camera previewSize width=%d,height=%d", previewSize.width, previewSize
+                .height));
+
         parameters.setPreviewSize(previewSize.width, previewSize.height);
 
         //设置自动对焦
@@ -79,8 +86,6 @@ public class CustomCameraManager {
             parameters.setVideoStabilization(true);
         }
 
-        Camera.Size previewSizeForVideo = parameters.getPreferredPreviewSizeForVideo();
-
         mCamera.setParameters(parameters);
 
         return preView;
@@ -88,16 +93,16 @@ public class CustomCameraManager {
 
     /**
      * 从列表中选取合适的分辨率
-     * 默认w:h = 4:3
+     * 默认w:h = 16:9
      * <p>tip：这里的w对应屏幕的height
      * h对应屏幕的width<p/>
      */
     private Camera.Size getProperSize(List<Camera.Size> pictureSizeList, float screenRatio) {
 
-        Log.i(TAG, "screenRatio=" + screenRatio);
+        Log.e(TAG, "screenRatio=" + screenRatio);
         Camera.Size result = null;
         for (Camera.Size size : pictureSizeList) {
-            Log.i("SIZE", String.format("camera size width=%d,height=%d", size.width, size.height));
+            Log.e("SIZE", String.format("camera size width=%d,height=%d", size.width, size.height));
             float currentRatio = ((float) size.width) / size.height;
             if (currentRatio - screenRatio == 0) {
                 result = size;
@@ -108,8 +113,8 @@ public class CustomCameraManager {
         if (null == result) {
             for (Camera.Size size : pictureSizeList) {
                 float curRatio = ((float) size.width) / size.height;
-                // 默认w:h = 4:3
-                if (curRatio == 4f / 3) {
+                // 默认w:h = 16:9
+                if (curRatio == 16f / 9) {
                     result = size;
                     break;
                 }
@@ -156,12 +161,12 @@ public class CustomCameraManager {
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             // 设置录制的视频编码h263
             mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-            // 设置视频录制的分辨率。必须放在设置编码和格式的后面，否则报错,设置的size手机不支持会启动失败 暂未找到合适的方法
+            // 设置视频录制的分辨率。必须放在设置编码和格式的后面，否则报错,设置的size部分手机不支持会启动失败 暂未找到合适的方法
             //mRecorder.setVideoSize(width, height);
             // 设置录制的视频帧率。必须放在设置编码和格式的后面，否则报错
-            mRecorder.setVideoFrameRate(15);
+            mRecorder.setVideoFrameRate(30);
             //设置码率，每秒的大小
-            mRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
+            mRecorder.setVideoEncodingBitRate(3 * 1024 * 1024);
             // 设置最大的录制时间
             mRecorder.setMaxDuration(80000);
 
@@ -315,6 +320,24 @@ public class CustomCameraManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void turnLightCamera(Context context, boolean turnLightOn) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            if (mCamera != null) {
+                Camera.Parameters p = mCamera.getParameters();
+                if (turnLightOn && Camera.Parameters.FLASH_MODE_OFF.equals(p.getFlashMode())) {
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                } else if (!turnLightOn && Camera.Parameters.FLASH_MODE_TORCH.equals(p.getFlashMode())) {
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                } else {
+                    return;
+                }
+                mCamera.setParameters(p);
+            }
+        } else {
+            Toast.makeText(context, "请检查设备是否支持闪光灯功能", Toast.LENGTH_SHORT).show();
         }
     }
 

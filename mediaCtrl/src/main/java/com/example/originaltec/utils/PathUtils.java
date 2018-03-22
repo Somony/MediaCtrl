@@ -7,7 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * 获取地址
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception  文件路径处理类
  */
 public class PathUtils {
     /**

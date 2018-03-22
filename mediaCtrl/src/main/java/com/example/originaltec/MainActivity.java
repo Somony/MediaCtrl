@@ -17,7 +17,11 @@ import com.example.originaltec.utils.permission.PermissionResultListener;
 import com.example.originaltec.utils.permission.PermissionUtils;
 import com.example.originaltec.utils.photoselect.PhotoSelectManager;
 import com.example.originaltec.utils.photoselect.PhotoSelector;
-
+/**
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception  测试图片选择和拍照
+ */
 public class MainActivity extends AppCompatActivity {
 
     private PhotoSelectManager manager;
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         manager.from(this);
 
         MainFragment mainFragment = MainFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_container,mainFragment,mainFragment.getClass()
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_container, mainFragment, mainFragment.getClass()
                 .getSimpleName()).commit();
     }
 
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 new PermissionResultListener() {
                     @Override
-                    public void permissionGranted() {
+                    public void permissionGranted(int requestCode) {
                         View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_photo_selector_layout, null, false);
                         DialogUtils.showDialog(MainActivity.this, view, Gravity.BOTTOM, true);
                         view.findViewById(R.id.image_capture).setOnClickListener((v) -> {
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         });
 
-                        view.findViewById(R.id.custom_camera).setOnClickListener((v)->{startActivity(new Intent(MainActivity.this,CustomCameraActivity.class));});
+                        view.findViewById(R.id.custom_camera).setOnClickListener((v) -> startActivity(new Intent(MainActivity.this, CustomCameraActivity.class)));
 
                         view.findViewById(R.id.cancel).setOnClickListener((v) -> {
                             DialogUtils.dialogDismiss();
@@ -85,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void permissionDenied() {
+                    public void permissionDenied(int requestCode) {
+                        PermissionUtils.showMissingPermissionDialog(MainActivity.this);
 
                     }
                 }, REQUEST_PERMISSION);

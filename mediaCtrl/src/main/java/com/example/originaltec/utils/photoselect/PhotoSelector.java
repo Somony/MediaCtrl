@@ -6,10 +6,12 @@ import android.content.Intent;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by lhc on 18/3/6.
- */
 
+/**
+ * @author 作者：Somon
+ * @date   创建时间：2018/3/22
+ * @desception
+ */
 public class PhotoSelector {
     private static PhotoSelector selector = new PhotoSelector();
     static final String TYPE_CAPTURE = "imageCapture";
